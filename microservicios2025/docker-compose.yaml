@@ -1,0 +1,356 @@
+#version: '3.8'
+#
+#services:
+#  order-postgres:
+#    image: postgres:15-alpine
+#    container_name: order_postgres_db
+#    environment:
+#      POSTGRES_USER: user
+#      POSTGRES_PASSWORD: pwd1
+#      POSTGRES_DB: orderdb
+#    ports:
+#      - "5433:5432"
+#    volumes:
+#      - order_pgdata:/var/lib/postgresql/data
+#
+#  order:
+#    container_name: order-service
+#    build:
+#      context: ./Order
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - order-postgres
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://order-postgres:5432/orderdb
+#      SPRING_DATASOURCE_USERNAME: user
+#      SPRING_DATASOURCE_PASSWORD: pwd1
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#    ports:
+#      - "8080:8080"
+#
+#  inventory-postgres:
+#    image: postgres:15-alpine
+#    container_name: inventory_postgres_db
+#    environment:
+#      POSTGRES_USER: user
+#      POSTGRES_PASSWORD: pwd2
+#      POSTGRES_DB: inventorydb
+#    ports:
+#      - "5434:5432"
+#    volumes:
+#      - inventory_pgdata:/var/lib/postgresql/data
+#
+#  inventory:
+#    container_name: inventory-service
+#    build:
+#      context: ./Inventory
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - inventory-postgres
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://inventory-postgres:5432/inventorydb
+#      SPRING_DATASOURCE_USERNAME: user
+#      SPRING_DATASOURCE_PASSWORD: pwd2
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#    ports:
+#      - "8180:8080"
+#
+#  payment-postgres:
+#    image: postgres:15-alpine
+#    container_name: payment_postgres_db
+#    environment:
+#      POSTGRES_USER: user
+#      POSTGRES_PASSWORD: pwd3
+#      POSTGRES_DB: paymentdb
+#    ports:
+#      - "5435:5432"
+#    volumes:
+#      - payment_pgdata:/var/lib/postgresql/data
+#
+#  payment:
+#    container_name: payment-service
+#    build:
+#      context: ./Payment
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - payment-postgres
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://payment-postgres:5432/paymentdb
+#      SPRING_DATASOURCE_USERNAME: user
+#      SPRING_DATASOURCE_PASSWORD: pwd3
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#    ports:
+#      - "8280:8080"
+#
+#  mongo:
+#    image: mongo:6.0
+#    container_name: mongo_db
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - mongo_data:/data/db
+#
+#  product:
+#    container_name: Product
+#    build:
+#      context: ./product-service
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - mongo
+#    environment:
+#      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/productdb
+#    ports:
+#      - "8380:8080"
+#
+#volumes:
+#  order_pgdata:
+#  inventory_pgdata:
+#  payment_pgdata:
+#  mongo_data:
+
+
+#/////////////////////////
+#version: '3.8'
+#
+#services:
+#  order-postgres:
+#    image: postgres:15-alpine
+#    container_name: order_postgres_db
+#    environment:
+#      POSTGRES_USER: user
+#      POSTGRES_PASSWORD: pwd1
+#      POSTGRES_DB: orderdb
+#    ports:
+#      - "5433:5432"
+#    volumes:
+#      - order_pgdata:/var/lib/postgresql/data
+#
+#  order:
+#    container_name: order-service
+#    build:
+#      context: ./Order  # Cambiado de ./order-service a ./Order
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - order-postgres
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://order-postgres:5432/orderdb
+#      SPRING_DATASOURCE_USERNAME: user
+#      SPRING_DATASOURCE_PASSWORD: pwd1
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#    ports:
+#      - "8080:8080"
+#
+#  inventory-postgres:
+#    image: postgres:15-alpine
+#    container_name: inventory_postgres_db
+#    environment:
+#      POSTGRES_USER: user
+#      POSTGRES_PASSWORD: pwd2
+#      POSTGRES_DB: inventorydb
+#    ports:
+#      - "5434:5432"
+#    volumes:
+#      - inventory_pgdata:/var/lib/postgresql/data
+#
+#  inventory:
+#    container_name: inventory-service
+#    build:
+#      context: ./Inventory  # Cambiado de ./inventory-service a ./Inventory
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - inventory-postgres
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://inventory-postgres:5432/inventorydb
+#      SPRING_DATASOURCE_USERNAME: user
+#      SPRING_DATASOURCE_PASSWORD: pwd2
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#    ports:
+#      - "8180:8080"
+#
+#  payment-postgres:
+#    image: postgres:15-alpine
+#    container_name: payment_postgres_db
+#    environment:
+#      POSTGRES_USER: user
+#      POSTGRES_PASSWORD: pwd3
+#      POSTGRES_DB: paymentdb
+#    ports:
+#      - "5435:5432"
+#    volumes:
+#      - payment_pgdata:/var/lib/postgresql/data
+#
+#  payment:
+#    container_name: payment-service
+#    build:
+#      context: ./Payment  # Cambiado de ./payment-service a ./Payment
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - payment-postgres
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://payment-postgres:5432/paymentdb
+#      SPRING_DATASOURCE_USERNAME: user
+#      SPRING_DATASOURCE_PASSWORD: pwd3
+#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+#    ports:
+#      - "8280:8080"
+#
+#  mongo:
+#    image: mongo:6.0
+#    container_name: mongo_db
+#    ports:
+#      - "27017:27017"
+#    volumes:
+#      - mongo_data:/data/db
+#
+#  product:
+#    container_name: product-service
+#    build:
+#      context: ./Product  # Cambiado de ./product-service a ./Product
+#      dockerfile: Dockerfile
+#    depends_on:
+#      - mongo
+#    environment:
+#      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/productdb
+#    ports:
+#      - "8380:8080"
+#
+#volumes:
+#  order_pgdata:
+#  inventory_pgdata:
+#  payment_pgdata:
+#  mongo_data:
+
+
+version: '3.8'
+
+services:
+  order-postgres:
+    image: postgres:15-alpine
+    container_name: order_postgres_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pwd1
+      POSTGRES_DB: orderdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - order_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d orderdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  order:
+    container_name: order-service
+    build:
+      context: ./Order
+      dockerfile: Dockerfile
+    depends_on:
+      order-postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://order-postgres:5432/orderdb
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pwd1
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8080:8080"
+
+  inventory-postgres:
+    image: postgres:15-alpine
+    container_name: inventory_postgres_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pwd2
+      POSTGRES_DB: inventorydb
+    ports:
+      - "5434:5432"
+    volumes:
+      - inventory_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d inventorydb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  inventory:
+    container_name: inventory-service
+    build:
+      context: ./Inventory
+      dockerfile: Dockerfile
+    depends_on:
+      inventory-postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://inventory-postgres:5432/inventorydb
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pwd2
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8180:8080"
+
+  payment-postgres:
+    image: postgres:15-alpine
+    container_name: payment_postgres_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pwd3
+      POSTGRES_DB: paymentdb
+    ports:
+      - "5435:5432"
+    volumes:
+      - payment_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d paymentdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  payment:
+    container_name: payment-service
+    build:
+      context: ./Payment
+      dockerfile: Dockerfile
+    depends_on:
+      payment-postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://payment-postgres:5432/paymentdb
+      SPRING_DATASOURCE_USERNAME: user
+      SPRING_DATASOURCE_PASSWORD: pwd3
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8280:8080"
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongo_db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  product:
+    container_name: product-service
+    build:
+      context: ./Product
+      dockerfile: Dockerfile
+    depends_on:
+      mongo:
+        condition: service_healthy
+    environment:
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/productdb
+    ports:
+      - "8380:8080"
+
+volumes:
+  order_pgdata:
+  inventory_pgdata:
+  payment_pgdata:
+  mongo_data:
