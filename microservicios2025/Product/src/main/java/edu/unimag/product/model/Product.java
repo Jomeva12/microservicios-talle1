@@ -31,4 +31,5 @@ public class Product {
 
     @Column(nullable = false)
     private Integer  stockQuantity;
+
 }
