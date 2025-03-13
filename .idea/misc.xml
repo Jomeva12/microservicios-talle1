@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="MavenProjectsManager">
@@ -7,6 +8,9 @@
         <option value="$PROJECT_DIR$/microservicios2025/Payment/pom.xml" />
         <option value="$PROJECT_DIR$/microservicios2025/Product/pom.xml" />
         <option value="$PROJECT_DIR$/microservicios2025/Inventory/pom.xml" />
+        <option value="$PROJECT_DIR$/eureka-server/pom.xml" />
+        <option value="$PROJECT_DIR$/eureka-client/pom.xml" />
+        <option value="$PROJECT_DIR$/service-discovery/pom.xml" />
       </list>
     </option>
   </component>

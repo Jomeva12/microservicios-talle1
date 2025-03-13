@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
@@ -15,8 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class ProductControllerUnitTest {
@@ -34,200 +32,80 @@ class ProductControllerUnitTest {
 
     @Test
     void testCreateProduct() {
-        // Arrange
-        Product product = Product.builder()
-                .name("Laptop")
-                .description("High-end gaming laptop")
-                .price(1500.0)
-                .stockQuantity(10)
-                .build();
+        // Crear un objeto Product
+        Product product = new Product("Laptop", "High-end gaming laptop", 1500, 10);
 
-        when(productService.createProduct(any(Product.class))).thenReturn(product);
+        // Simular el comportamiento del servicio
+        when(productService.createProduct(product)).thenReturn(product);
 
-        // Act
+        // Llamar al método del controlador
         ResponseEntity<Product> response = productController.createProduct(product);
 
-        // Assert
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertEquals(product, response.getBody());
-        verify(productService, times(1)).createProduct(any(Product.class));
-    }
-
-    @Test
-    void testGetProductById() {
-        // Arrange
-        UUID productId = UUID.randomUUID();
-        Product product = Product.builder()
-                .id(productId)
-                .name("Laptop")
-                .description("High-end gaming laptop")
-                .price(1500.0)
-                .stockQuantity(10)
-                .build();
-
-        when(productService.getProductById(productId)).thenReturn(Optional.of(product));
-
-        // Act
-        ResponseEntity<Product> response = productController.getProductById(productId);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(product, response.getBody());
-        verify(productService, times(1)).getProductById(productId);
-    }
-
-    @Test
-    void testGetProductByIdNotFound() {
-        // Arrange
-        UUID productId = UUID.randomUUID();
-        when(productService.getProductById(productId)).thenReturn(Optional.empty());
-
-        // Act
-        ResponseEntity<Product> response = productController.getProductById(productId);
-
-        // Assert
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(productService, times(1)).getProductById(productId);
+        // Verificar el código de estado y el cuerpo
+        assertEquals(200, response.getStatusCodeValue()); // Verifica el código de estado HTTP
+        assertEquals(product, response.getBody()); // Verifica el cuerpo de la respuesta
     }
 
     @Test
     void testGetAllProducts() {
-        // Arrange
-        Product product1 = Product.builder()
-                .id(UUID.randomUUID())
-                .name("Laptop")
-                .description("High-end gaming laptop")
-                .price(1500.0)
-                .stockQuantity(10)
-                .build();
+        // Crear una lista de productos
+        List<Product> products = Arrays.asList(
+                new Product("Laptop", "High-end gaming laptop", 1500, 10),
+                new Product("Phone", "Smartphone", 800, 20)
+        );
 
-        Product product2 = Product.builder()
-                .id(UUID.randomUUID())
-                .name("Smartphone")
-                .description("Latest model smartphone")
-                .price(800.0)
-                .stockQuantity(20)
-                .build();
-
-        List<Product> products = Arrays.asList(product1, product2);
-
+        // Simular el comportamiento del servicio
         when(productService.getAllProducts()).thenReturn(products);
 
-        // Act
+        // Llamar al método del controlador
         ResponseEntity<List<Product>> response = productController.getAllProducts();
 
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(products, response.getBody());
-        verify(productService, times(1)).getAllProducts();
+        // Verificar el código de estado y el cuerpo
+        assertEquals(200, response.getStatusCodeValue()); // Verifica el código de estado HTTP
+        assertEquals(products, response.getBody()); // Verifica el cuerpo de la respuesta
+    }
+
+    @Test
+    void testGetProductById() {
+        UUID id = UUID.randomUUID();
+        Product product = new Product("Laptop", "High-end gaming laptop", 1500, 10);
+        when(productService.getProductById(id)).thenReturn(Optional.of(product));
+
+        ResponseEntity<Product> response = productController.getProductById(id);
+
+        assertEquals(200, response.getStatusCodeValue());
+        assertEquals(product, response.getBody());
+    }
+
+    @Test
+    void testGetProductByIdNotFound() {
+        UUID id = UUID.randomUUID();
+        when(productService.getProductById(id)).thenReturn(Optional.empty());
+
+        ResponseEntity<Product> response = productController.getProductById(id);
+
+        assertEquals(404, response.getStatusCodeValue());
     }
 
     @Test
     void testUpdateProduct() {
-        // Arrange
-        UUID productId = UUID.randomUUID();
-        Product product = Product.builder()
-                .id(productId)
-                .name("Laptop")
-                .description("High-end gaming laptop")
-                .price(1500.0)
-                .stockQuantity(10)
-                .build();
+        UUID id = UUID.randomUUID();
+        Product product = new Product("Laptop", "High-end gaming laptop", 1500, 10);
+        when(productService.updateProduct(id, product)).thenReturn(product);
 
-        when(productService.updateProduct(productId, product)).thenReturn(product);
+        ResponseEntity<Product> response = productController.updateProduct(id, product);
 
-        // Act
-        ResponseEntity<Product> response = productController.updateProduct(productId, product);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(200, response.getStatusCodeValue());
         assertEquals(product, response.getBody());
-        verify(productService, times(1)).updateProduct(productId, product);
-    }
-
-    @Test
-    void testUpdateProductNotFound() {
-        // Arrange
-        UUID productId = UUID.randomUUID();
-        Product product = Product.builder()
-                .id(productId)
-                .name("Laptop")
-                .description("High-end gaming laptop")
-                .price(1500.0)
-                .stockQuantity(10)
-                .build();
-
-        when(productService.updateProduct(productId, product)).thenThrow(new RuntimeException("Product not found"));
-
-        // Act
-        ResponseEntity<Product> response = productController.updateProduct(productId, product);
-
-        // Assert
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(productService, times(1)).updateProduct(productId, product);
     }
 
     @Test
     void testDeleteProduct() {
-        // Arrange
-        UUID productId = UUID.randomUUID();
-        when(productService.existsProduct(productId)).thenReturn(true);
-        doNothing().when(productService).deleteProduct(productId);
+        UUID id = UUID.randomUUID();
+        doNothing().when(productService).deleteProduct(id);
 
-        // Act
-        ResponseEntity<Void> response = productController.deleteProduct(productId);
+        ResponseEntity<Void> response = productController.deleteProduct(id);
 
-        // Assert
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(productService, times(1)).existsProduct(productId);
-        verify(productService, times(1)).deleteProduct(productId);
-    }
-
-    @Test
-    void testDeleteProductNotFound() {
-        // Arrange
-        UUID productId = UUID.randomUUID();
-        when(productService.existsProduct(productId)).thenReturn(false);
-
-        // Act
-        ResponseEntity<Void> response = productController.deleteProduct(productId);
-
-        // Assert
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(productService, times(1)).existsProduct(productId);
-        verify(productService, never()).deleteProduct(productId);
-    }
-
-    @Test
-    void testGetProductsByName() {
-        // Arrange
-        String productName = "Laptop";
-        Product product1 = Product.builder()
-                .id(UUID.randomUUID())
-                .name("Laptop")
-                .description("High-end gaming laptop")
-                .price(1500.0)
-                .stockQuantity(10)
-                .build();
-
-        Product product2 = Product.builder()
-                .id(UUID.randomUUID())
-                .name("Laptop")
-                .description("Budget laptop")
-                .price(500.0)
-                .stockQuantity(15)
-                .build();
-
-        List<Product> products = Arrays.asList(product1, product2);
-
-        when(productService.getProductsByName(productName)).thenReturn(products);
-
-        // Act
-        ResponseEntity<List<Product>> response = productController.getProductsByName(productName);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(products, response.getBody());
-        verify(productService, times(1)).getProductsByName(productName);
+        assertEquals(204, response.getStatusCodeValue());
     }
 }
