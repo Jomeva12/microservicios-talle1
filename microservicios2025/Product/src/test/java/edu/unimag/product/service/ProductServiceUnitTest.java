@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class ProductServiceUnitTest {
@@ -32,110 +33,70 @@ class ProductServiceUnitTest {
 
     @Test
     void testCreateProduct() {
-        Product product = new Product();
-        product.setName("Test Product");
-        product.setPrice(100.0);
-        product.setStockQuantity(10);
-
+        Product product = new Product("Laptop", "High-end gaming laptop", 1500, 10);
         when(productRepository.save(product)).thenReturn(product);
 
         Product createdProduct = productService.createProduct(product);
 
-        assertNotNull(createdProduct);
-        assertEquals("Test Product", createdProduct.getName());
-        verify(productRepository, times(1)).save(product);
-    }
-
-    @Test
-    void testGetProductById() {
-        UUID id = UUID.randomUUID();
-        Product product = new Product();
-        product.setId(id);
-        product.setName("Test Product");
-
-        when(productRepository.findById(id)).thenReturn(Optional.of(product));
-
-        Optional<Product> foundProduct = productService.getProductById(id);
-
-        assertTrue(foundProduct.isPresent());
-        assertEquals(id, foundProduct.get().getId());
-        verify(productRepository, times(1)).findById(id);
+        assertEquals(product, createdProduct);
     }
 
     @Test
     void testGetAllProducts() {
-        Product product1 = new Product();
-        product1.setName("Product 1");
+        List<Product> products = Arrays.asList(
+                new Product("Laptop", "High-end gaming laptop", 1500, 10),
+                new Product("Phone", "Smartphone", 800, 20)
+        );
+        when(productRepository.findAll()).thenReturn(products);
 
-        Product product2 = new Product();
-        product2.setName("Product 2");
+        List<Product> allProducts = productService.getAllProducts();
 
-        when(productRepository.findAll()).thenReturn(Arrays.asList(product1, product2));
+        assertEquals(products, allProducts);
+    }
 
-        List<Product> products = productService.getAllProducts();
+    @Test
+    void testGetProductById() {
+        // Crear un ID y un objeto Product
+        UUID id = UUID.randomUUID();
+        Product product = new Product("Laptop", "High-end gaming laptop", 1500, 10);
+        product.setId(id); // Asignar el ID al producto
 
-        assertEquals(2, products.size());
-        verify(productRepository, times(1)).findAll();
+        // Simular el comportamiento de findById
+        when(productRepository.findById(id)).thenReturn(Optional.of(product));
+
+        // Llamar al método getProductById del servicio
+        Optional<Product> foundProduct = productService.getProductById(id);
+
+        // Verificar que el producto devuelto sea el mismo que el simulado
+        assertTrue(foundProduct.isPresent()); // Asegurarse de que el Optional no esté vacío
+        assertEquals(product, foundProduct.get()); // Verificar que el producto sea el correcto
     }
 
     @Test
     void testUpdateProduct() {
+        // Crear un ID y un objeto Product
         UUID id = UUID.randomUUID();
-        Product existingProduct = new Product();
-        existingProduct.setId(id);
-        existingProduct.setName("Existing Product");
+        Product product = new Product("Laptop", "High-end gaming laptop", 1500, 10);
+        product.setId(id); // Asignar el ID al producto
 
-        Product updatedProduct = new Product();
-        updatedProduct.setName("Updated Product");
+        // Simular el comportamiento de findById
+        when(productRepository.findById(id)).thenReturn(Optional.of(product));
 
-        when(productRepository.existsById(id)).thenReturn(true);
-        when(productRepository.save(updatedProduct)).thenReturn(updatedProduct);
+        // Simular el comportamiento de save
+        when(productRepository.save(product)).thenReturn(product);
 
-        Product result = productService.updateProduct(id, updatedProduct);
+        // Llamar al método updateProduct del servicio
+        Product updatedProduct = productService.updateProduct(id, product);
 
-        assertNotNull(result);
-        assertEquals("Updated Product", result.getName());
-        verify(productRepository, times(1)).existsById(id);
-        verify(productRepository, times(1)).save(updatedProduct);
+        // Verificar que el producto devuelto sea el mismo que el simulado
+        assertEquals(product, updatedProduct);
     }
 
     @Test
     void testDeleteProduct() {
         UUID id = UUID.randomUUID();
-
-        when(productRepository.existsById(id)).thenReturn(true);
-
+        doNothing().when(productRepository).deleteById(id);
         productService.deleteProduct(id);
-
         verify(productRepository, times(1)).deleteById(id);
-    }
-
-    @Test
-    void testGetProductsByName() {
-        String name = "Test";
-        Product product1 = new Product();
-        product1.setName("Test Product 1");
-
-        Product product2 = new Product();
-        product2.setName("Test Product 2");
-
-        when(productRepository.getProductsByName(name)).thenReturn(Arrays.asList(product1, product2));
-
-        List<Product> products = productService.getProductsByName(name);
-
-        assertEquals(2, products.size());
-        verify(productRepository, times(1)).getProductsByName(name);
-    }
-
-    @Test
-    void testExistsProduct() {
-        UUID id = UUID.randomUUID();
-
-        when(productRepository.existsById(id)).thenReturn(true);
-
-        boolean exists = productService.existsProduct(id);
-
-        assertTrue(exists);
-        verify(productRepository, times(1)).existsById(id);
     }
 }

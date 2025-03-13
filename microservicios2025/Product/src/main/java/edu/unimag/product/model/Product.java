@@ -1,35 +1,40 @@
 package edu.unimag.product.model;
 
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.Date;
 import java.util.UUID;
 
-@Data
-@Entity
-@Table(name = "products")
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Document(collection = "products") // Anotación de MongoDB
+@Data // Lombok: Genera getters, setters, toString, equals, hashCode
+@AllArgsConstructor // Lombok: Genera un constructor con todos los campos
 public class Product {
+    @Id // Anotación de MongoDB para el ID
+    private UUID id; // Usamos UUID en lugar de String
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "product_id", columnDefinition = "UUID")
-    private UUID id;
-
-    @Column(nullable = false, length = 100)
     private String name;
-
-    @Column(length = 500)
     private String description;
+    private double price;
+    private int stock;
+    private Date createdAt;
+    private Date updatedAt;
 
-    @Column(nullable = false)
-    private Double price;
+    // Constructor vacío (necesario para Spring Data MongoDB)
+    public Product() {
+        this.id = UUID.randomUUID(); // Generar un UUID automáticamente
+    }
 
-    @Column(nullable = false)
-    private Integer  stockQuantity;
-
+    // Constructor con parámetros
+    public Product(String name, String description, double price, int stock) {
+        this.id = UUID.randomUUID(); // Generar un UUID automáticamente
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.stock = stock;
+        this.createdAt = new Date();
+        this.updatedAt = new Date();
+    }
 }
