@@ -1,10 +1,10 @@
-package edu.unimag.eurekaclient;
+package edu.unimag;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EurekaClientApplicationTests {
+class EurekaServerApplicationTests {
 
     @Test
     void contextLoads() {
