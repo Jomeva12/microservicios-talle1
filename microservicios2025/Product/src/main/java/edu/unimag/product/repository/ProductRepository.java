@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface ProductRepository extends MongoRepository<Product, UUID> {
-    // Puedes agregar métodos personalizados aquí si es necesario
+public interface ProductRepository extends MongoRepository<Product, String> {
+    // Métodos personalizados si los necesitas
 }

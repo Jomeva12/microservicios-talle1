@@ -1,10 +1,8 @@
 package edu.unimag.inventory.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.util.UUID;
 
 @Data
@@ -12,7 +10,9 @@ import java.util.UUID;
 @Table(name = "inventory")
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder // <-- Agrega esta anotación
+@Builder
+@Getter
+@Setter
 public class Inventory {
 
     @Id
