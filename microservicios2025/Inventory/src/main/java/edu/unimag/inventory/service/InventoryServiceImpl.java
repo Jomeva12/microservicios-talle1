@@ -42,9 +42,13 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public Inventory updateInventory(UUID id, Inventory inventory) {
-        if (inventoryRepository.existsById(id)) {
-            inventory.setId(id);
-            return inventoryRepository.save(inventory);
+        Optional<Inventory> existingInventoryOpt = inventoryRepository.findById(id);
+        if (existingInventoryOpt.isPresent()) {
+            Inventory existingInventory = existingInventoryOpt.get();
+            existingInventory.setProductId(inventory.getProductId());
+            existingInventory.setQuantity(inventory.getQuantity());
+            existingInventory.setStatus(inventory.getStatus());
+            return inventoryRepository.save(existingInventory);
         }
         throw new RuntimeException("Inventory not found with id: " + id);
     }

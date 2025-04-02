@@ -2,70 +2,97 @@ package edu.unimag.inventory.repository;
 
 import edu.unimag.inventory.model.Inventory;
 import edu.unimag.inventory.model.InventoryStatus;
-import org.junit.jupiter.api.BeforeEach;
+import edu.unimag.inventory.service.AbstractIntegrationTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Testcontainers
-public class InventoryRepositoryIntegrationTest {
-
-    @Container
-    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15-alpine");
+class InventoryRepositoryIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
     private InventoryRepository inventoryRepository;
 
-    @DynamicPropertySource
-    static void configureProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
-
-    private Inventory inventory;
-
-    @BeforeEach
-    public void setUp() {
-        inventory = Inventory.builder()
+    @Test
+    void saveInventory() {
+        // Arrange
+        Inventory inventory = Inventory.builder()
                 .productId(UUID.randomUUID())
                 .quantity(10)
                 .status(InventoryStatus.IN_STOCK)
                 .build();
+
+        // Act
+        Inventory savedInventory = inventoryRepository.save(inventory);
+
+        // Assert
+        assertNotNull(savedInventory.getId());
+        assertEquals(inventory.getProductId(), savedInventory.getProductId());
+    }
+
+    @Test
+    void findById() {
+        // Arrange
+        Inventory inventory = Inventory.builder()
+                .productId(UUID.randomUUID())
+                .quantity(10)
+                .status(InventoryStatus.IN_STOCK)
+                .build();
+        Inventory savedInventory = inventoryRepository.save(inventory);
+
+        // Act
+        Optional<Inventory> foundInventory = inventoryRepository.findById(savedInventory.getId());
+
+        // Assert
+        assertTrue(foundInventory.isPresent());
+        assertEquals(savedInventory.getId(), foundInventory.get().getId());
+    }
+
+    @Test
+    void findByProductId() {
+        // Arrange
+        UUID productId = UUID.randomUUID();
+        Inventory inventory = Inventory.builder()
+                .productId(productId)
+                .quantity(10)
+                .status(InventoryStatus.IN_STOCK)
+                .build();
         inventoryRepository.save(inventory);
+
+        // Act
+        Optional<Inventory> foundInventory = inventoryRepository.findByProductId(productId);
+
+        // Assert
+        assertTrue(foundInventory.isPresent());
+        assertEquals(productId, foundInventory.get().getProductId());
     }
 
     @Test
-    public void testFindByProductId() {
+    void findByStatus() {
+        // Arrange
+        Inventory inventory1 = Inventory.builder()
+                .productId(UUID.randomUUID())
+                .quantity(10)
+                .status(InventoryStatus.IN_STOCK)
+                .build();
+        Inventory inventory2 = Inventory.builder()
+                .productId(UUID.randomUUID())
+                .quantity(5)
+                .status(InventoryStatus.IN_STOCK)
+                .build();
+        inventoryRepository.saveAll(List.of(inventory1, inventory2));
+
         // Act
-        Optional<Inventory> found = inventoryRepository.findByProductId(inventory.getProductId());
+        List<Inventory> foundInventories = inventoryRepository.findByStatus(InventoryStatus.IN_STOCK);
 
         // Assert
-        assertThat(found).isPresent();
-        assertThat(found.get().getQuantity()).isEqualTo(10);
-    }
-
-    @Test
-    public void testFindByStatus() {
-        // Act
-        List<Inventory> inStockItems = inventoryRepository.findByStatus(InventoryStatus.IN_STOCK);
-
-        // Assert
-        assertThat(inStockItems).hasSize(1);
-        assertThat(inStockItems.get(0).getStatus()).isEqualTo(InventoryStatus.IN_STOCK);
+        assertEquals(2, foundInventories.size());
     }
 }

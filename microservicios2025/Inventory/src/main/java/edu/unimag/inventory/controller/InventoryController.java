@@ -57,7 +57,7 @@ public class InventoryController {
     }
 
     @PatchMapping("/quantity/{productId}")
-    public ResponseEntity<Void> updateQuantity(@PathVariable UUID productId, @RequestParam Integer quantity) {
+    public ResponseEntity<Inventory> updateQuantity(@PathVariable UUID productId, @RequestParam Integer quantity) {
         boolean updated = inventoryService.updateQuantity(productId, quantity);
         return new ResponseEntity<>(updated ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }

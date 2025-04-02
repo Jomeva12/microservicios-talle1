@@ -64,7 +64,7 @@ public class OrderControllerIntegrationTest {
                 .totalAmount(200.0)
                 .build();
 
-        ResponseEntity<Order> response = restTemplate.postForEntity("/api/orders", newOrder, Order.class);
+        ResponseEntity<Order> response = restTemplate.postForEntity("/api/order", newOrder, Order.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         assertThat(response.getBody()).isNotNull();
@@ -82,7 +82,7 @@ public class OrderControllerIntegrationTest {
 
     @Test
     public void testGetOrderById_NotFound() {
-        ResponseEntity<Order> response = restTemplate.getForEntity("/api/orders/" + UUID.randomUUID(), Order.class);
+        ResponseEntity<Order> response = restTemplate.getForEntity("/api/order/" + UUID.randomUUID(), Order.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
@@ -91,7 +91,7 @@ public class OrderControllerIntegrationTest {
     public void testUpdateOrder() {
         order.setTotalAmount(150.0);
         ResponseEntity<Order> response = restTemplate.exchange(
-                "/api/orders/" + order.getId(),
+                "/api/order/" + order.getId(),
                 HttpMethod.PUT,
                 new org.springframework.http.HttpEntity<>(order),
                 Order.class
@@ -104,8 +104,8 @@ public class OrderControllerIntegrationTest {
 
     @Test
     public void testDeleteOrder() {
-        restTemplate.delete("/api/orders/" + order.getId());
-        ResponseEntity<Order> response = restTemplate.getForEntity("/api/orders/" + order.getId(), Order.class);
+        restTemplate.delete("/api/order/" + order.getId());
+        ResponseEntity<Order> response = restTemplate.getForEntity("/api/order/" + order.getId(), Order.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }

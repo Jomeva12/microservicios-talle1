@@ -54,7 +54,7 @@ class PaymentControllerIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        baseUrl = "http://localhost:" + port + "/api/payments";
+        baseUrl = "http://localhost:" + port + "/api/payment";
         paymentRepository.deleteAll();
     }
 
